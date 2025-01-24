@@ -2,8 +2,6 @@ package com.example.pokedex.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.Objects;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Pokemon {
     private String name;

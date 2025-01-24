@@ -1,5 +1,6 @@
 package com.example.pokedex.web.integration;
 
+import com.example.pokedex.web.dto.ErrorMessage;
 import com.example.pokedex.web.dto.Pokemon;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,8 +15,12 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.net.URI;
 
-@ActiveProfiles("dev")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = {
+    "server.port=6000",
+    "endpoints.pokemon=http://localhost:6000",
+    "endpoint.translations=http://localhost:6000"
+})
 @DirtiesContext
 class PokemonControllerIT {
 
@@ -24,16 +29,17 @@ class PokemonControllerIT {
     @LocalServerPort
     private int port;
 
-    //@TODO: Instead of requesting on pokeapi. Create a controller with a saved response we can later use in a mock server response
-
     @Test
     public void should_return_a_pokemon_information_when_requesting_by_name() {
+        // Arrange
         final RequestEntity<?> request = RequestEntity.get(
             buildUrl(port, "/pokemon/mewtwo")
         ).build();
 
+        // Execute
         final ResponseEntity<Pokemon> response = TEMPLATE.exchange(request, Pokemon.class);
 
+        // Assert
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertNotNull(response.getBody());
 
@@ -43,6 +49,28 @@ class PokemonControllerIT {
         Assertions.assertEquals("It was created by a scientist after years of horrific gene splicing and DNA engineering experiments.", pokemon.getDescription());
         Assertions.assertEquals("rare", pokemon.getHabitat());
         Assertions.assertEquals(Boolean.TRUE, pokemon.getIsLegendary());
+    }
+
+    /**
+     * Verify Client Errors are handled correctly
+     */
+    @Test
+    public void should_return_404_not_found_when_pokemon_is_not_found() {
+        // Arrange
+        final RequestEntity<?> request = RequestEntity.get(
+            buildUrl(port, "/pokemon/xyz")
+        ).build();
+
+        // Execute
+        final ResponseEntity<ErrorMessage> response = TEMPLATE.exchange(request, ErrorMessage.class);
+
+        // Assert
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        Assertions.assertNotNull(response.getBody());
+
+        final ErrorMessage e = response.getBody();
+
+        Assertions.assertEquals("Pokemon not found", e.message());
     }
 
     private URI buildUrl(int port, String path) {
