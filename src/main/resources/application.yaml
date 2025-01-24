@@ -1,0 +1,7 @@
+endpoints:
+  pokemon: ${POKEMON_HOST}
+  translations: ${TRANSLATION_HOST}
+
+spring:
+  application:
+    name: pokedex
