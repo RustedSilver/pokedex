@@ -1,2 +1,2 @@
-POKEMON_HOST: "http://localhost:5000"
-TRANSLATION_HOST: "http://localhost:5000"
+#POKEMON_HOST: "http://localhost:5000"
+#TRANSLATION_HOST: "http://localhost:5000"

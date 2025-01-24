@@ -1,30 +1,27 @@
 package com.example.pokedex.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.util.Assert;
 
-@ConfigurationProperties(value = "prefix.endpoints")
+@ConfigurationProperties(value = "endpoints")
 public class EndpointsConfig {
-    private String pokemon;
-    private String translation;
+    private final String pokemon;
+    private final String translations;
 
-    public EndpointsConfig(String pokemonHost, String translationHost) {
-        this.pokemon = pokemonHost;
-        this.translation = translationHost;
+    public EndpointsConfig(String pokemon, String translations) {
+        Assert.notNull(pokemon, "Pokemon endpoint not provided");
+        Assert.notNull(translations, "Translation endpoint not provided");
+        this.pokemon = pokemon;
+        this.translations = translations;
     }
 
-    public String getPokemon() {
+    public String getPokemonHost() {
         return pokemon;
     }
 
-    public void setPokemon(String pokemon) {
-        this.pokemon = pokemon;
+    public String getTranslationHost() {
+        return translations;
     }
 
-    public String getTranslation() {
-        return translation;
-    }
 
-    public void setTranslation(String translation) {
-        this.translation = translation;
-    }
 }

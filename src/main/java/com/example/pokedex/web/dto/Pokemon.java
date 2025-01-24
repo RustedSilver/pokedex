@@ -2,6 +2,8 @@ package com.example.pokedex.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.Objects;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Pokemon {
     private String name;
@@ -25,11 +27,11 @@ public class Pokemon {
         this.description = description;
     }
 
-    public Boolean getLegendary() {
+    public Boolean getIsLegendary() {
         return isLegendary;
     }
 
-    public void setLegendary(Boolean legendary) {
+    public void setIsLegendary(Boolean legendary) {
         isLegendary = legendary;
     }
 
