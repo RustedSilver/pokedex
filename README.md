@@ -80,4 +80,19 @@ Once the application has started, you can access the documentation by navigating
 **Note**: The default port is 5000. However, the port can be dynamically set through configuration
 <br/>
 
-![Swagger](assets/swagger-ui.png)
+![Swagger](documentation/swagger-ui.png)
+
+
+### Tests
+
+This project includes a comprehensive test suite organized as follows
+
+- <b>web/integration</b>: Contains integration tests that utilize a test controller as mock real server.
+- <b>web/*Test.java</b>: Contains unit tests for individual components.
+
+The test suite can be run with the following command:
+
+```shell
+mvn clean verify
+```
+
