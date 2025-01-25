@@ -73,6 +73,28 @@ class PokemonControllerIT {
         Assertions.assertEquals("Pokemon not found", e.message());
     }
 
+    @Test
+    public void should_return_a_pokemon_information_translated_as_yoda_when_requesting_rare_pokemon() {
+        // Arrange
+        final RequestEntity<?> request = RequestEntity.get(
+            buildUrl(port, "/pokemon/translated/mewtwo")
+        ).build();
+
+        // Execute
+        final ResponseEntity<Pokemon> response = TEMPLATE.exchange(request, Pokemon.class);
+
+        // Assert
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertNotNull(response.getBody());
+
+        final Pokemon pokemon = response.getBody();
+
+        Assertions.assertEquals("mewtwo", pokemon.getName());
+        Assertions.assertEquals("Created by a scientist after years of horrific gene splicing and dna engineering experiments, it was.", pokemon.getDescription());
+        Assertions.assertEquals("rare", pokemon.getHabitat());
+        Assertions.assertEquals(Boolean.TRUE, pokemon.getIsLegendary());
+    }
+
     private URI buildUrl(int port, String path) {
         return URI.create("http://localhost:" + port + path);
     }

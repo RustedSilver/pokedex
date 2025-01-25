@@ -5,7 +5,6 @@ import com.example.pokedex.helpers.TestUtils;
 import com.example.pokedex.web.dto.FunTranslationDto;
 import com.example.pokedex.web.dto.Pokemon;
 import com.example.pokedex.web.dto.PokemonSpecies;
-import com.example.pokedex.web.dto.TranslationRequestBody;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -55,13 +54,13 @@ public class PokemonHandlerTranslationTest {
         Mockito
             .doAnswer(a -> {
                 final URI translatedUri = a.getArgument(0);
-                Assertions.assertEquals("http://localhost:8000/translate/yoda.json", translatedUri.toString());
+                Assertions.assertTrue(translatedUri.toString().contains("http://localhost:8000/translate/yoda.json?text="));
+
 
                 return TestUtils.generateFakeTranslation();
             })
-            .when(restTemplate).postForObject(
+            .when(restTemplate).getForObject(
                 ArgumentMatchers.any(URI.class),
-                ArgumentMatchers.any(TranslationRequestBody.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 
@@ -75,9 +74,8 @@ public class PokemonHandlerTranslationTest {
 
 
         Mockito.verify(restTemplate, Mockito.times(1))
-            .postForObject(
+            .getForObject(
                 ArgumentMatchers.any(URI.class),
-                ArgumentMatchers.any(TranslationRequestBody.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 
@@ -104,13 +102,12 @@ public class PokemonHandlerTranslationTest {
         Mockito
             .doAnswer(a -> {
                 final URI translatedUri = a.getArgument(0);
-                Assertions.assertEquals("http://localhost:8000/translate/yoda.json", translatedUri.toString());
+                Assertions.assertTrue(translatedUri.toString().contains("http://localhost:8000/translate/yoda.json?text="));
 
                 return TestUtils.generateFakeTranslation();
             })
-            .when(restTemplate).postForObject(
+            .when(restTemplate).getForObject(
                 ArgumentMatchers.any(URI.class),
-                ArgumentMatchers.any(TranslationRequestBody.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 
@@ -126,9 +123,8 @@ public class PokemonHandlerTranslationTest {
 
 
         Mockito.verify(restTemplate, Mockito.times(1))
-            .postForObject(
+            .getForObject(
                 ArgumentMatchers.any(URI.class),
-                ArgumentMatchers.any(TranslationRequestBody.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 
@@ -156,13 +152,13 @@ public class PokemonHandlerTranslationTest {
             .doAnswer(a -> {
                 final URI translatedUri = a.getArgument(0);
                 // Validate is a shakespeare translation
-                Assertions.assertEquals("http://localhost:8000/translate/shakespeare", translatedUri.toString());
+                Assertions.assertTrue(translatedUri.toString().contains("http://localhost:8000/translate/shakespeare.json?text="));
+
 
                 return TestUtils.generateFakeTranslation();
             })
-            .when(restTemplate).postForObject(
+            .when(restTemplate).getForObject(
                 ArgumentMatchers.any(URI.class),
-                ArgumentMatchers.any(TranslationRequestBody.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 
@@ -178,9 +174,8 @@ public class PokemonHandlerTranslationTest {
 
 
         Mockito.verify(restTemplate, Mockito.times(1))
-            .postForObject(
+            .getForObject(
                 ArgumentMatchers.any(URI.class),
-                ArgumentMatchers.any(TranslationRequestBody.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 
@@ -205,9 +200,8 @@ public class PokemonHandlerTranslationTest {
 
         Mockito
             .doThrow(TestUtils.buildServerException(400))
-            .when(restTemplate).postForObject(
+            .when(restTemplate).getForObject(
                 ArgumentMatchers.any(URI.class),
-                ArgumentMatchers.any(TranslationRequestBody.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 
@@ -223,9 +217,8 @@ public class PokemonHandlerTranslationTest {
 
 
         Mockito.verify(restTemplate, Mockito.times(1))
-            .postForObject(
+            .getForObject(
                 ArgumentMatchers.any(URI.class),
-                ArgumentMatchers.any(TranslationRequestBody.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 

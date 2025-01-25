@@ -22,4 +22,9 @@ public class PokemonController {
     public ResponseEntity<?> getPokemon(@PathVariable("name") String name) {
         return ResponseEntity.ok(handler.getPokemon(name));
     }
+
+    @GetMapping("translated/{name}")
+    public ResponseEntity<?> getPokemonTranslation(@PathVariable("name") String name) {
+        return ResponseEntity.ok(handler.getPokemonTranslation(name));
+    }
 }
