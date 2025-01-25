@@ -1,9 +1,11 @@
 package com.example.pokedex.web;
 
 import com.example.pokedex.config.EndpointsConfig;
+import com.example.pokedex.web.dto.FunTranslationDto;
 import com.example.pokedex.web.dto.HttpRuntimeException;
 import com.example.pokedex.web.dto.Pokemon;
 import com.example.pokedex.web.dto.PokemonSpecies;
+import com.example.pokedex.web.dto.TranslationRequestBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,9 +14,14 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class PokemonHandler {
+
+    private static final Logger logger = Logger.getLogger(PokemonHandler.class.getName());
 
     private final EndpointsConfig endpointsConfig;
     private final RestTemplate restTemplate;
@@ -57,9 +64,38 @@ public class PokemonHandler {
 
     }
 
-//
-//    public Pokemon getPokemonTranslation(String name) {
-//
-//    }
+
+    public Pokemon getPokemonTranslation(String name) {
+        final Pokemon pokemon = getPokemon(name);
+        final URI translationUri = getTranslationUri(pokemon);
+
+        try {
+            final TranslationRequestBody descriptionDto = new TranslationRequestBody(pokemon.getDescription());
+            final FunTranslationDto translatedText = restTemplate.postForObject(translationUri, descriptionDto,FunTranslationDto.class);
+            Assert.notNull(translatedText, "Received empty response from translation server");
+
+            if (translatedText.getTranslatedText().isPresent()) {
+                pokemon.setDescription(translatedText.getTranslatedText().get());
+            }
+
+        } catch (Exception e) {
+            // If translation fails it is not considered severe. Only log information and proceed with operations
+            logger.info("Translation APIs responded with error " + e.getMessage());
+
+        }
+
+        return pokemon;
+    }
+
+
+    private URI getTranslationUri(Pokemon pokemon) {
+        final String basePath = endpointsConfig.getTranslationHost() + "/translate/";
+
+        if (pokemon.getIsLegendary() || Objects.equals(pokemon.getHabitat(), "cave")) {
+            return  URI.create(basePath + "yoda.json");
+        } else {
+            return  URI.create(basePath + "shakespeare");
+        }
+    }
 
 }
