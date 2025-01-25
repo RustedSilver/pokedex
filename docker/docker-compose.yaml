@@ -1,0 +1,12 @@
+services:
+  pokedex:
+    image: pokedex:1.0.0
+    container_name: pokedex
+    build:
+      context: pokedex
+      dockerfile: ../Dockerfile
+    environment:
+      - POKEMON_HOST=https://pokeapi.co
+      - TRANSLATION_HOST=https://api.funtranslations.com
+    ports:
+      - "5000:5000"
