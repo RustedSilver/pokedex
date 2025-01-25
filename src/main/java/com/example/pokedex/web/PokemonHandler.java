@@ -7,14 +7,15 @@ import com.example.pokedex.web.dto.Pokemon;
 import com.example.pokedex.web.dto.PokemonSpecies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -70,11 +71,18 @@ public class PokemonHandler {
         final URI translationUri = getTranslationUri(pokemon);
 
         try {
-            final FunTranslationDto translatedText = restTemplate.getForObject(translationUri, FunTranslationDto.class);
-            Assert.notNull(translatedText, "Received empty response from translation server");
+            final RequestEntity<?> request = RequestEntity
+                .post(translationUri)
+                .header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .body(FactoryBuilder.buildTranslationRequest(pokemon.getDescription()));
 
-            if (translatedText.getTranslatedText().isPresent()) {
-                pokemon.setDescription(translatedText.getTranslatedText().get());
+            final ResponseEntity<FunTranslationDto> response = restTemplate.exchange(request, FunTranslationDto.class);
+
+            FunTranslationDto tranlation = response.getBody();
+            Assert.notNull(tranlation, "Received empty response from translation server");
+
+            if (response.getStatusCode().is2xxSuccessful() && tranlation.getTranslatedText().isPresent()) {
+                pokemon.setDescription(tranlation.getTranslatedText().get());
             }
 
         } catch (Exception e) {
@@ -88,13 +96,12 @@ public class PokemonHandler {
 
 
     private URI getTranslationUri(Pokemon pokemon) {
-        final String text = URLEncoder.encode(pokemon.getDescription(), Charset.defaultCharset());
         final String basePath = endpointsConfig.getTranslationHost() + "/translate/";
 
         if (pokemon.getIsLegendary() || Objects.equals(pokemon.getHabitat(), "cave")) {
-            return  URI.create(basePath + "yoda.json?text=" + text);
+            return  URI.create(basePath + "yoda.json");
         } else {
-            return  URI.create(basePath + "shakespeare.json?text=" + text);
+            return  URI.create(basePath + "shakespeare.json");
         }
     }
 

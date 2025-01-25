@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
@@ -70,9 +72,9 @@ public class MockServersController {
     /**
      * Translation APIs
      */
-    @GetMapping("/translate/yoda.json")
-    public ResponseEntity<?> getYodaTranslation(@RequestParam(value = "text", required = false) String body) throws IOException {
-        final ResponseEntity<JsonNode> result = validate(body);
+    @PostMapping("/translate/yoda.json")
+    public ResponseEntity<?> getYodaTranslation(@RequestBody MultiValueMap<String, String> body) throws IOException {
+        final ResponseEntity<JsonNode> result = validate(body.getFirst("text"));
         if (result != null) {
             return result;
         }
@@ -94,9 +96,9 @@ public class MockServersController {
 
     }
 
-    @GetMapping("/translate/shakespeare.json")
-    public ResponseEntity<?> getShakespeareTranslation(@RequestParam(value = "text", required = false) String body) throws IOException {
-        final ResponseEntity<JsonNode> result = validate(body);
+    @PostMapping("/translate/shakespeare.json")
+    public ResponseEntity<?> getShakespeareTranslation(@RequestBody MultiValueMap<String, String> body) throws IOException {
+        final ResponseEntity<JsonNode> result = validate(body.getFirst("text"));
         if (result != null) {
             return result;
         }

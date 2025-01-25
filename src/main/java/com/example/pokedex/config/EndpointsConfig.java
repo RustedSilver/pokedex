@@ -9,8 +9,9 @@ public class EndpointsConfig {
     private final String translations;
 
     public EndpointsConfig(String pokemon, String translations) {
-        Assert.notNull(pokemon, "Pokemon endpoint not provided");
-        Assert.notNull(translations, "Translation endpoint not provided");
+        Assert.isTrue(!pokemon.isBlank(), "Pokeapi endpoint not provided");
+        Assert.isTrue(!translations.isBlank(), "Translation endpoint not provided");
+
         this.pokemon = pokemon;
         this.translations = translations;
     }

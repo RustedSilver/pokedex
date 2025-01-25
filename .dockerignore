@@ -1,0 +1,8 @@
+.idea/
+target/
+.mvn/
+.git/
+.gitattributes/
+
+# We do not want to import the test directory.
+src/tests/

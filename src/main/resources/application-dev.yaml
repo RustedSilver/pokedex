@@ -1,3 +1,3 @@
 POKEMON_HOST: "https://pokeapi.co"
-TRANSLATION_HOST: "https://funtranslations.com"
+TRANSLATION_HOST: "https://api.funtranslations.com"
 SWAGGER: true

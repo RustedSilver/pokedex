@@ -16,6 +16,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -53,14 +55,13 @@ public class PokemonHandlerTranslationTest {
 
         Mockito
             .doAnswer(a -> {
-                final URI translatedUri = a.getArgument(0);
-                Assertions.assertTrue(translatedUri.toString().contains("http://localhost:8000/translate/yoda.json?text="));
+                final RequestEntity<?> requestT = a.getArgument(0);
+                Assertions.assertTrue(requestT.getUrl().toString().contains("http://localhost:8000/translate/yoda.json"));
 
-
-                return TestUtils.generateFakeTranslation();
+                return ResponseEntity.ok(TestUtils.generateFakeTranslation());
             })
-            .when(restTemplate).getForObject(
-                ArgumentMatchers.any(URI.class),
+            .when(restTemplate).exchange(
+                ArgumentMatchers.any(RequestEntity.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 
@@ -74,8 +75,8 @@ public class PokemonHandlerTranslationTest {
 
 
         Mockito.verify(restTemplate, Mockito.times(1))
-            .getForObject(
-                ArgumentMatchers.any(URI.class),
+            .exchange(
+                ArgumentMatchers.any(RequestEntity.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 
@@ -101,13 +102,13 @@ public class PokemonHandlerTranslationTest {
 
         Mockito
             .doAnswer(a -> {
-                final URI translatedUri = a.getArgument(0);
-                Assertions.assertTrue(translatedUri.toString().contains("http://localhost:8000/translate/yoda.json?text="));
+                final RequestEntity<?> requestT = a.getArgument(0);
+                Assertions.assertTrue(requestT.getUrl().toString().contains("http://localhost:8000/translate/yoda.json"));
 
-                return TestUtils.generateFakeTranslation();
+                return ResponseEntity.ok(TestUtils.generateFakeTranslation());
             })
-            .when(restTemplate).getForObject(
-                ArgumentMatchers.any(URI.class),
+            .when(restTemplate).exchange(
+                ArgumentMatchers.any(RequestEntity.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 
@@ -123,8 +124,8 @@ public class PokemonHandlerTranslationTest {
 
 
         Mockito.verify(restTemplate, Mockito.times(1))
-            .getForObject(
-                ArgumentMatchers.any(URI.class),
+            .exchange(
+                ArgumentMatchers.any(RequestEntity.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 
@@ -150,15 +151,14 @@ public class PokemonHandlerTranslationTest {
 
         Mockito
             .doAnswer(a -> {
-                final URI translatedUri = a.getArgument(0);
+                final RequestEntity<?> requestT = a.getArgument(0);
+                Assertions.assertTrue(requestT.getUrl().toString().contains("http://localhost:8000/translate/shakespeare.json"));
                 // Validate is a shakespeare translation
-                Assertions.assertTrue(translatedUri.toString().contains("http://localhost:8000/translate/shakespeare.json?text="));
-
-
-                return TestUtils.generateFakeTranslation();
+                
+                return ResponseEntity.ok(TestUtils.generateFakeTranslation());
             })
-            .when(restTemplate).getForObject(
-                ArgumentMatchers.any(URI.class),
+            .when(restTemplate).exchange(
+                ArgumentMatchers.any(RequestEntity.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 
@@ -174,8 +174,8 @@ public class PokemonHandlerTranslationTest {
 
 
         Mockito.verify(restTemplate, Mockito.times(1))
-            .getForObject(
-                ArgumentMatchers.any(URI.class),
+            .exchange(
+                ArgumentMatchers.any(RequestEntity.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 
@@ -200,8 +200,8 @@ public class PokemonHandlerTranslationTest {
 
         Mockito
             .doThrow(TestUtils.buildServerException(400))
-            .when(restTemplate).getForObject(
-                ArgumentMatchers.any(URI.class),
+            .when(restTemplate).exchange(
+                ArgumentMatchers.any(RequestEntity.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 
@@ -217,8 +217,8 @@ public class PokemonHandlerTranslationTest {
 
 
         Mockito.verify(restTemplate, Mockito.times(1))
-            .getForObject(
-                ArgumentMatchers.any(URI.class),
+            .exchange(
+                ArgumentMatchers.any(RequestEntity.class),
                 ArgumentMatchers.eq(FunTranslationDto.class)
             );
 
